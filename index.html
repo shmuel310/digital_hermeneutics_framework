@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>數位詮釋學體系：從知識孤島到協作大腦</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@400;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-paper: #F9F6F0;
+            --text-ink: #2C2C2C;
+            --accent-crimson: #8C3A3A;
+            --accent-green: #4A5D4E;
+            --border-light: #E2DCD0;
+        }
+
+        body {
+            background-color: var(--bg-paper);
+            color: var(--text-ink);
+            font-family: 'Noto Serif TC', serif;
+            line-height: 1.95;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, .font-display {
+            font-family: 'Playfair Display', 'Noto Serif TC', serif;
+        }
+
+        .font-sans {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-paper);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D1C9B8;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #B8B09F;
+        }
+
+        /* Annotation System */
+        .annotation-trigger {
+            cursor: pointer;
+            border-bottom: 2px dashed var(--accent-crimson);
+            color: var(--text-ink);
+            font-weight: 600;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .annotation-trigger:hover {
+            color: var(--accent-crimson);
+            background-color: rgba(140, 58, 58, 0.05);
+        }
+
+        #global-tooltip {
+            position: absolute;
+            background-color: #ffffff;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            width: max-content;
+            max-width: 320px;
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            font-family: 'Noto Sans TC', sans-serif;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        #global-tooltip.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* Structural Elements */
+        .quote-box {
+            border-left: 4px solid var(--accent-crimson);
+            background: linear-gradient(to right, rgba(140,58,58,0.05), transparent);
+        }
+
+        .step-list-item {
+            position: relative;
+            padding-left: 3rem;
+        }
+        
+        .step-list-item::before {
+            content: attr(data-step);
+            position: absolute;
+            left: 0;
+            top: 0.25rem;
+            width: 2rem;
+            height: 2rem;
+            background-color: var(--accent-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        /* Workflow Timeline Pipeline */
+        .timeline-node {
+            position: absolute;
+            left: -25px;
+            top: 4px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: white;
+            border: 3px solid var(--accent-green);
+            z-index: 10;
+        }
+
+        .timeline-node.highlight {
+            border-color: var(--accent-crimson);
+            background-color: var(--accent-crimson);
+        }
+
+        /* Drawer Transition */
+        #toc-drawer {
+            transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-rose-100 selection:text-rose-900">
+
+    <!-- Global Tooltip Element -->
+    <div id="global-tooltip" role="tooltip">
+        <strong id="tooltip-title" class="block text-rose-800 mb-1 border-b border-gray-100 pb-1"></strong>
+        <span id="tooltip-content" class="text-gray-600 block mt-1"></span>
+    </div>
+
+    <!-- Sticky Header -->
+    <header class="fixed top-0 w-full z-40 bg-[#F9F6F0]/90 backdrop-blur-md border-b border-[#E2DCD0] transition-transform duration-300">
+        <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <span class="font-sans text-xs font-bold tracking-widest uppercase text-white bg-[#4A5D4E] px-3 py-1 rounded-full">研究架構白皮書</span>
+                <span class="font-sans text-sm font-medium text-gray-600 hidden sm:block">數位詮釋學體系 v2.2</span>
+            </div>
+            <button id="toc-btn" class="font-sans text-sm font-medium flex items-center space-x-2 text-gray-800 hover:text-[#8C3A3A] transition-colors">
+                <span>目錄</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- TOC Drawer -->
+    <aside id="toc-drawer" class="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-50 transform translate-x-full overflow-y-auto">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-8">
+                <h3 class="font-sans font-bold text-lg">章節目錄</h3>
+                <button id="close-toc" class="text-gray-400 hover:text-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <nav class="font-sans text-sm space-y-4">
+                <a href="#section-hero" class="block text-gray-600 hover:text-[#8C3A3A] hover:translate-x-1 transition-transform">00 / 導言與編譯說明</a>
+                <a href="#section-01" class="block text-gray-600 hover:text-[#8C3A3A] hover:translate-x-1 transition-transform">01 / 這個計劃想解決什麼問題？</a>
+                <a href="#section-02" class="block text-gray-600 hover:text-[#8C3A3A] hover:translate-x-1 transition-transform">02 / 整體架構：兩套工具，一個大腦</a>
+                <a href="#section-03" class="block text-gray-600 hover:text-[#8C3A3A] hover:translate-x-1 transition-transform">03 / 十二＋一位 AI 專家：他們爭什麼？</a>
+                <a href="#section-04" class="block text-gray-600 hover:text-[#8C3A3A] hover:translate-x-1 transition-transform">04 / LLM Council：動態辯論工作流</a>
+                <a href="#section-05" class="block text-gray-600 hover:text-[#8C3A3A] hover:translate-x-1 transition-transform">05 / LLM Wiki：對抗熵增的知識庫</a>
+                <a href="#section-06" class="block text-gray-600 hover:text-[#8C3A3A] hover:translate-x-1 transition-transform">06 / 基礎設施：檢索與性能優化</a>
+                <a href="#section-07" class="block text-gray-600 hover:text-[#8C3A3A] hover:translate-x-1 transition-transform">07 / 邁向無特定模型的研發生態</a>
+                <a href="#section-annotations" class="block text-gray-600 hover:text-[#8C3A3A] mt-8 pt-4 border-t border-gray-100">完整注釋列表</a>
+            </nav>
+        </div>
+    </aside>
+    <!-- Overlay for Drawer -->
+    <div id="drawer-overlay" class="fixed inset-0 bg-black/20 z-40 hidden backdrop-blur-sm transition-opacity"></div>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-32">
+        
+        <!-- Hero Section -->
+        <article id="section-hero" class="max-w-3xl mx-auto px-6 fade-in pt-12 pb-16">
+            <div class="mb-6 flex items-center space-x-3 font-sans">
+                <span class="text-xs font-bold text-[#8C3A3A] tracking-widest uppercase">Overview</span>
+                <span class="w-12 h-px bg-[#8C3A3A]"></span>
+                <span class="text-xs text-gray-500">Digital Hermeneutics Framework</span>
+            </div>
+            <h1 class="text-5xl md:text-6xl font-bold leading-tight mb-6 tracking-wide text-gray-900">
+                數位詮釋學體系<br>
+                <span class="text-3xl md:text-4xl text-gray-600 font-normal italic mt-2 block">從知識孤島到協作大腦</span>
+            </h1>
+            <p class="text-xl text-gray-600 font-sans font-light leading-relaxed mb-10">
+                結合代理式工作流與自動化維基的次世代學術研究架構。<br>
+                這是一份寫給所有人的藍圖——探討 AI 如何突破框架鎖定，重塑嚴謹的知識生產過程。
+            </p>
+
+            <!-- Editor's Note -->
+            <div class="bg-white border border-[#E2DCD0] p-6 rounded-lg shadow-sm font-sans relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1 h-full bg-[#4A5D4E]"></div>
+                <h4 class="font-bold text-[#4A5D4E] mb-2 flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    編譯說明
+                </h4>
+                <p class="text-sm text-gray-600 leading-relaxed">
+                    <strong>互動式注釋系統：</strong>文中帶有<span class="border-b-2 border-dashed border-[#8C3A3A] text-gray-800 font-medium px-1 mx-1">虛線底線的專有名詞</span>，點擊即可展開詳細解說。您無須具備神學或軟體工程背景，也能輕鬆理解這套系統的核心哲學。
+                </p>
+            </div>
+        </article>
+
+        <!-- Section 01 -->
+        <section id="section-01" class="max-w-3xl mx-auto px-6 fade-in mb-20">
+            <h2 class="text-sm font-sans font-bold tracking-widest text-[#8C3A3A] mb-2 uppercase">01 / The Problem</h2>
+            <h3 class="text-3xl font-bold mb-8">這個計劃想解決什麼問題？</h3>
+            
+            <p class="mb-6">
+                在當前的學術研究領域中，研究者經常面臨兩個無法迴避的結構性困境：<strong>「知識孤島（Knowledge Silos）」</strong>與<strong>「框架鎖定（Frame-Lock）」</strong>。
+            </p>
+            <p class="mb-6">
+                傳統的閱讀與筆記方式，受限於人類大腦處理資訊的頻寬。當我們面對海量的文獻、古老的文本或錯綜複雜的學派爭論時，知識往往散落在不同的資料夾與大腦記憶的角落，無法形成有效的交互參照；這便是「知識孤島」。
+            </p>
+            <p class="mb-6">
+                更致命的是「框架鎖定」。人類學者在進行文本詮釋時，無可避免地會帶入自身的學派背景與偏見。一旦確立了某種視角，便很難再跳脫出來，從完全對立的方法論去審視同一份材料。
+            </p>
+            <div class="quote-box p-6 my-8 font-serif italic text-lg text-gray-700 rounded-r-lg">
+                「數位詮釋學體系試圖打破的，正是人類在處理龐大文本時的認知極限與視野盲區。我們需要的不是一個幫我們『寫論文』的工具，而是一個能強迫我們『換位思考』的數位大腦。」
+            </div>
+        </section>
+
+        <!-- Section 02 -->
+        <section id="section-02" class="max-w-3xl mx-auto px-6 fade-in mb-20">
+            <h2 class="text-sm font-sans font-bold tracking-widest text-[#8C3A3A] mb-2 uppercase">02 / Architecture</h2>
+            <h3 class="text-3xl font-bold mb-8">整體架構：兩套工具，一個大腦</h3>
+            
+            <p class="mb-6">
+                為了解決上述問題，本體系採用了雙層架構設計。簡單來說，它由「執行的雙手」與「記憶的大腦」構成。
+            </p>
+            
+            <div class="space-y-8 my-10">
+                <div class="step-list-item" data-step="1">
+                    <h4 class="font-bold text-xl mb-2">動態執行層：<span class="annotation-trigger" data-annotation="agentic-workflow">Agentic Workflows</span></h4>
+                    <p class="text-gray-700">
+                        這不是傳統的一問一答式 AI 聊天。透過部署於 <span class="annotation-trigger" data-annotation="antigravity">Google Antigravity</span> 或 <span class="annotation-trigger" data-annotation="claude-code">Claude Code</span> 等次世代整合開發環境（IDE）中的代理系統，AI 能夠自主規劃任務、調用 <span class="annotation-trigger" data-annotation="mcp">MCP 伺服器</span> 讀取本地檔案，並自動執行跨文獻的交叉比對。
+                    </p>
+                </div>
+                <div class="step-list-item" data-step="2">
+                    <h4 class="font-bold text-xl mb-2">靜態沉澱層：<span class="annotation-trigger" data-annotation="llm-wiki">LLM Wiki</span></h4>
+                    <p class="text-gray-700">
+                        執行層產生的辯論結果與高價值結論，不能閱後即焚。系統會將這些洞見自動「編纂」成結構化的 Markdown 筆記（例如 Obsidian），形成一個專屬的知識庫。這確保了系統具備「知識複利」的能力，讓這個大腦越用越聰明。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 03 -->
+        <section id="section-03" class="max-w-3xl mx-auto px-6 fade-in mb-20">
+            <h2 class="text-sm font-sans font-bold tracking-widest text-[#8C3A3A] mb-2 uppercase">03 / The Council</h2>
+            <h3 class="text-3xl font-bold mb-8">十二＋一位 AI 專家：他們是誰，他們爭什麼？</h3>
+            
+            <p class="mb-6">
+                本系統的核心引擎是一個被稱為「LLM Council（語言模型委員會）」的辯論機制。在進行複雜文本分析（例如聖經文本詮釋）時，系統會同時實例化 12 位具備不同學科背景與方法論的 AI 專家，以及 1 位專職把關的「反詮釋學者」。以下是這 13 位專家各自負責的嚴格範疇：
+            </p>
+
+            <!-- 13 Experts Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 my-8 font-sans">
+                <div class="border border-[#E2DCD0] bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-[10px] font-bold text-[#4A5D4E] uppercase tracking-wider mb-1">Expert 01</div>
+                    <div class="text-sm font-bold text-gray-800 mb-1">希伯來文/希臘文專家</div>
+                    <p class="text-xs text-gray-600 leading-relaxed">專注於古語的詞彙字根、語法結構與語境中的語義邊界分析。</p>
+                </div>
+                <div class="border border-[#E2DCD0] bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-[10px] font-bold text-[#4A5D4E] uppercase tracking-wider mb-1">Expert 02</div>
+                    <div class="text-sm font-bold text-gray-800 mb-1">歷史批判專家</div>
+                    <p class="text-xs text-gray-600 leading-relaxed">考證古代近東的歷史背景、作者身份、成書年代與當時的社會政治狀態。</p>
+                </div>
+                <div class="border border-[#E2DCD0] bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-[10px] font-bold text-[#4A5D4E] uppercase tracking-wider mb-1">Expert 03</div>
+                    <div class="text-sm font-bold text-gray-800 mb-1">正典詮釋專家</div>
+                    <p class="text-xs text-gray-600 leading-relaxed">檢視單一經文與整本聖經正典（Canon）的交互參照與神學一致性。</p>
+                </div>
+                <div class="border border-[#E2DCD0] bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-[10px] font-bold text-[#4A5D4E] uppercase tracking-wider mb-1">Expert 04</div>
+                    <div class="text-sm font-bold text-gray-800 mb-1">系統神學專家</div>
+                    <p class="text-xs text-gray-600 leading-relaxed">將經文放在宏觀的教義框架（如神論、基督論、救恩論）中進行系統性檢驗。</p>
+                </div>
+                <div class="border border-[#E2DCD0] bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-[10px] font-bold text-[#4A5D4E] uppercase tracking-wider mb-1">Expert 05</div>
+                    <div class="text-sm font-bold text-gray-800 mb-1">文學形式分析師</div>
+                    <p class="text-xs text-gray-600 leading-relaxed">拆解文本的文體（如詩歌、天啟）、交叉對稱結構與古近東修辭手法。</p>
+                </div>
+                <div class="border border-[#E2DCD0] bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-[10px] font-bold text-[#4A5D4E] uppercase tracking-wider mb-1">Expert 06</div>
+                    <div class="text-sm font-bold text-gray-800 mb-1">經文鑑別學者</div>
+                    <p class="text-xs text-gray-600 leading-relaxed">比對古代抄本（如死海古卷、七十士譯本），評估原文的可靠性與異文演變。</p>
+                </div>
+                <div class="border border-[#E2DCD0] bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-[10px] font-bold text-[#4A5D4E] uppercase tracking-wider mb-1">Expert 07</div>
+                    <div class="text-sm font-bold text-gray-800 mb-1">聖經考古學家</div>
+                    <p class="text-xs text-gray-600 leading-relaxed">提供與經文相關的古代碑文、地理環境及物質文化之實體證據考證。</p>
+                </div>
+                <div class="border border-[#E2DCD0] bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-[10px] font-bold text-[#4A5D4E] uppercase tracking-wider mb-1">Expert 08</div>
+                    <div class="text-sm font-bold text-gray-800 mb-1">社會人類學者</div>
+                    <p class="text-xs text-gray-600 leading-relaxed">從群體動力學、榮辱文化（Honor/Shame）等視角重建當時的社會結構。</p>
+                </div>
+                <div class="border border-[#E2DCD0] bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-[10px] font-bold text-[#4A5D4E] uppercase tracking-wider mb-1">Expert 09</div>
+                    <div class="text-sm font-bold text-gray-800 mb-1">救贖歷史學者</div>
+                    <p class="text-xs text-gray-600 leading-relaxed">追蹤神聖啟示在歷史中的漸進性，確保單一文本不脫離宏大敘事脈絡。</p>
+                </div>
+                <div class="border border-[#E2DCD0] bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-[10px] font-bold text-[#4A5D4E] uppercase tracking-wider mb-1">Expert 10</div>
+                    <div class="text-sm font-bold text-gray-800 mb-1">敘事鑑別學者</div>
+                    <p class="text-xs text-gray-600 leading-relaxed">專注分析故事的情節張力、角色發展以及對預期讀者產生的心理反應。</p>
+                </div>
+                <div class="border border-[#E2DCD0] bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-[10px] font-bold text-[#4A5D4E] uppercase tracking-wider mb-1">Expert 11</div>
+                    <div class="text-sm font-bold text-gray-800 mb-1">歷史神學家</div>
+                    <p class="text-xs text-gray-600 leading-relaxed">梳理初代教父、宗教改革者等歷代大公教會對該段文獻的詮釋傳承。</p>
+                </div>
+                <div class="border border-[#E2DCD0] bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-[10px] font-bold text-[#4A5D4E] uppercase tracking-wider mb-1">Expert 12</div>
+                    <div class="text-sm font-bold text-gray-800 mb-1">應用與教牧神學家</div>
+                    <p class="text-xs text-gray-600 leading-relaxed">探索古老經文在現代倫理、教牧關懷與信仰實踐中的當代意義與界線。</p>
+                </div>
+                
+                <div class="col-span-1 sm:col-span-2 lg:col-span-3 border border-[#8C3A3A]/30 bg-red-50/50 p-5 rounded-lg shadow-sm mt-2 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1.5 h-full bg-[#8C3A3A]"></div>
+                    <div class="text-[10px] font-bold text-[#8C3A3A] uppercase tracking-wider mb-1">Expert 13 (Chaos Node)</div>
+                    <div class="text-base font-bold text-gray-900 mb-2">反詮釋學者 (The Devil's Advocate)</div>
+                    <p class="text-sm text-gray-700 leading-relaxed">這是系統的「誠信與邏輯防線」。唯一不負責提出新論點的角色，其任務扮演嚴苛的盲審員。透過強制調用工具查核資料庫（如 Zotero），專職尋找上述 12 人共識中的邏輯謬誤、證據斷層與「過度詮釋」，防止 AI 陷入集體盲思。</p>
+                </div>
+            </div>
+
+            <p class="mb-6">
+                每一位專家都有其嚴格的 Prompt 框架限制。例如，其中一位<strong>「希伯來文語言學專家」</strong>，其底層提示詞嚴格規定他必須：<br>
+                <span class="inline-block bg-gray-100 text-sm px-3 py-1 rounded-md my-2 font-sans">反對過度挖掘字根，堅持語境決定意義（Carson 的原則）</span>。
+            </p>
+            <p class="mb-8">
+                這 12 位專家會針對同一段落進行獨立分析，隨後進入「匿名互評階段（Anonymized Peer Review）」。然而，為了防止專家們陷入集體盲思，系統賦予了第 13 個角色最高的一票否決權：
+            </p>
+
+            <!-- Dialogue / Story Box -->
+            <div class="bg-[#2C2C2C] text-gray-300 p-8 rounded-xl shadow-lg my-8 relative">
+                <span class="absolute -top-3 left-6 bg-[#8C3A3A] text-white text-xs font-bold px-3 py-1 rounded font-sans uppercase tracking-wider">Chaos Engineering</span>
+                <h4 class="text-white font-bold text-xl mb-6">第 13 位專家：反詮釋學者（The Devil's Advocate）</h4>
+                
+                <div class="flex flex-col space-y-6 font-sans">
+                    <div class="flex">
+                        <div class="w-16 flex-shrink-0 text-[#B8B09F] font-bold text-sm">Council</div>
+                        <div class="flex-1 bg-gray-800 p-4 rounded-lg rounded-tl-none border border-gray-700">
+                            我們 12 位專家達成共識：該詞彙在此處暗示了古近東神話中對海怪的降伏，呼應了創世的秩序重建。
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <div class="w-16 flex-shrink-0 text-red-400 font-bold text-sm">Expert 13</div>
+                        <div class="flex-1 bg-red-900/20 p-4 rounded-lg rounded-tl-none border border-red-900/50 text-gray-200">
+                            <strong>否決。</strong>你們的推論發生了「過度詮釋」。根據 Zotero 資料庫中的當代文獻查核，該字根在同時期的世俗商業合約中僅作為普通動詞使用。你們的共識缺乏足夠的一手文獻支撐。
+                        </div>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-400 mt-6 pt-4 border-t border-gray-700">
+                    這種類似分散式系統中「混沌工程」的設計，是本計畫建立「學術誠信」技術防線的神來之筆。
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 04: LLM Council Workflow -->
+        <section id="section-04" class="max-w-3xl mx-auto px-6 fade-in mb-20">
+            <h2 class="text-sm font-sans font-bold tracking-widest text-[#8C3A3A] mb-2 uppercase">04 / The Engine</h2>
+            <h3 class="text-3xl font-bold mb-8">LLM Council：動態辯論工作流</h3>
+            
+            <p class="mb-6">
+                這 13 位專家的運作並非單純的 Prompt 疊加，而是透過嚴謹的「編排管線 (Orchestration Pipeline)」來推進。為了控制運算開銷並極大化思辨品質，系統被設計為以下五個運作階段：
+            </p>
+
+            <div class="relative border-l-2 border-[#E2DCD0] ml-3 pl-8 py-4 space-y-10 font-sans mt-10">
+                <!-- Stage 0 -->
+                <div class="relative">
+                    <div class="timeline-node"></div>
+                    <h4 class="font-bold text-lg text-gray-900 mb-1">Stage 0: 智能路由 (Router Classifier)</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        並非每次分析都需要叫齊 12 人。路由引擎會根據輸入文本的特徵（例如：是否包含大量古語、是否涉及教義爭議），動態選擇最適合的專家組合，以此降低無效的「編排開銷 (Orchestration Tax)」。
+                    </p>
+                </div>
+                
+                <!-- Stage 1 -->
+                <div class="relative">
+                    <div class="timeline-node"></div>
+                    <h4 class="font-bold text-lg text-gray-900 mb-1">Stage 1: 獨立見解生成 (Expert Insights)</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        被選中的專家們在互不干擾的「沙盒」中獨立作業，依據各自嚴格的方法論與領域背景，產出第一輪的文本詮釋與證據梳理。
+                    </p>
+                </div>
+
+                <!-- Stage 2 -->
+                <div class="relative">
+                    <div class="timeline-node"></div>
+                    <h4 class="font-bold text-lg text-gray-900 mb-1">Stage 2: 匿名互評 (Anonymized Peer Review)</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        專家們交換彼此的論點，但隱藏發言者身份。系統在此階段模擬人類學術界的「雙盲審查」，要求專家互相給出評分、尋找盲點並進行跨學科的激烈辯論。
+                    </p>
+                </div>
+
+                <!-- Stage 2.5 (Highlight) -->
+                <div class="relative">
+                    <div class="timeline-node highlight"></div>
+                    <h4 class="font-bold text-lg text-[#8C3A3A] mb-1">Stage 2.5: 誠信閘門 (Integrity Gate)</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        由第 13 位專家（反詮釋學者）強制介入。他會調用外部 API 查核 <span class="annotation-trigger" data-annotation="zotero">Zotero</span> 資料庫，驗證前階段產生的「共識」是否具備真實的文獻血緣。任何查無實證的「幻覺」或「引用漂移」都將在此被無情剔除。
+                    </p>
+                </div>
+
+                <!-- Stage 3 -->
+                <div class="relative">
+                    <div class="timeline-node"></div>
+                    <h4 class="font-bold text-lg text-gray-900 mb-1">Stage 3: 綜合與產出 (Synthesis & Output)</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        歷經高壓測試後存活下來的高價值論點與未解決的學派爭議，將被整合為一份結構化的最終報告，準備送入系統的「記憶大腦」中沉澱。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 05: LLM Wiki -->
+        <section id="section-05" class="max-w-3xl mx-auto px-6 fade-in mb-20">
+            <h2 class="text-sm font-sans font-bold tracking-widest text-[#8C3A3A] mb-2 uppercase">05 / The Memory</h2>
+            <h3 class="text-3xl font-bold mb-8">LLM Wiki：對抗熵增的知識庫</h3>
+            
+            <p class="mb-6">
+                當 LLM Council 產出珍貴的洞見後，這些知識該何去何從？這套系統的靜態沉澱層借鑒了 AI 學者 Andrej Karpathy 提出的 <span class="annotation-trigger" data-annotation="llm-wiki">LLM Wiki</span> 理念。
+            </p>
+            <p class="mb-6">
+                運作理論的核心是：<strong>「人類負責策展來源與提出好問題；LLM 負責一切維護與關聯工作。」</strong>
+            </p>
+
+            <!-- 3-Tier Architecture -->
+            <h4 class="font-bold text-xl mt-10 mb-4">文件三層架構 (L0 / L1 / L2 Ontology)</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-6 font-sans">
+                <div class="bg-white border-t-4 border-gray-300 p-5 rounded-lg shadow-sm">
+                    <div class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Layer 0</div>
+                    <div class="font-bold text-lg text-gray-900 mb-2">原始資料層 (Raw)</div>
+                    <p class="text-sm text-gray-600">未經加工的起點。包含匯入的原始文獻、外部檢索的快取紀錄與原始會議逐字稿。</p>
+                </div>
+                <div class="bg-white border-t-4 border-[#4A5D4E] p-5 rounded-lg shadow-sm">
+                    <div class="text-xs font-bold text-[#4A5D4E] uppercase tracking-widest mb-1">Layer 1</div>
+                    <div class="font-bold text-lg text-gray-900 mb-2">原子概念層 (Atomic)</div>
+                    <p class="text-sm text-gray-600">經過 Council 專家引擎萃取、驗證並打散的單一概念筆記（Atomic Notes），是知識庫的磚塊。</p>
+                </div>
+                <div class="bg-white border-t-4 border-[#8C3A3A] p-5 rounded-lg shadow-sm">
+                    <div class="text-xs font-bold text-[#8C3A3A] uppercase tracking-widest mb-1">Layer 2</div>
+                    <div class="font-bold text-lg text-gray-900 mb-2">宏觀綜合層 (Synthesis)</div>
+                    <p class="text-sm text-gray-600">高階綜合視角與領域地圖（MOC）。將多個 L1 節點相互連接，形成宏觀且持續迭代的論述。</p>
+                </div>
+            </div>
+
+            <!-- Entropy Risk & Knowledge Provenance Box -->
+            <div class="bg-orange-50/60 border border-orange-200/60 p-8 rounded-xl mt-10 relative">
+                <div class="absolute top-0 left-0 w-1.5 h-full bg-orange-400 rounded-l-xl"></div>
+                <h4 class="font-bold text-orange-900 text-xl mb-4 flex items-center">
+                    對抗系統熵增 (Entropy Risk)
+                </h4>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    任何長期營運的個人知識庫或 Wiki，最終都會面臨「<span class="annotation-trigger" data-annotation="entropy-risk">熵增風險</span>」——筆記逐漸混亂、過期、或是不同文獻間產生無法追溯的矛盾。
+                </p>
+                <p class="text-gray-700 leading-relaxed font-medium">
+                    LLM Wiki 的解法是導入「<span class="annotation-trigger" data-annotation="provenance">知識血緣追蹤 (Knowledge Provenance Tracking)</span>」。
+                </p>
+                <p class="text-sm text-gray-600 mt-4 border-t border-orange-200/60 pt-4">
+                    在 YAML Frontmatter 中，系統會強制記錄每一條 L1/L2 筆記是從哪個 L0 來源提取、由哪位 AI Agent 判定、且經歷過幾次迭代。<strong>「錯誤依然可能進入系統，但除非知識圖譜反覆強化這個錯誤，否則它不會作為『真理』傳播。」</strong>從此，人類的日常知識工作變成了針對高雜訊區域的「分診（Triage）」，而非無止境的手動清理。
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 06 -->
+        <section id="section-06" class="max-w-3xl mx-auto px-6 fade-in mb-20">
+            <h2 class="text-sm font-sans font-bold tracking-widest text-[#8C3A3A] mb-2 uppercase">06 / Infrastructure</h2>
+            <h3 class="text-3xl font-bold mb-8">基礎設施：檢索與性能優化</h3>
+            
+            <p class="mb-6">
+                從技術層面評價，這份藍圖在方法論的整合上展現了極高的成熟度。傳統的 <span class="annotation-trigger" data-annotation="rag">RAG 系統</span> 最大的痛點是「引用漂移」——也就是 AI 生成的內容與註腳張冠李戴。
+            </p>
+            <p class="mb-6">
+                誠如前文 Stage 2.5 提及，數位詮釋學體系運用工具強制比對資料庫（如 Zotero）與生成內容。只有通過文獻血緣追蹤的結論，才會被允許寫入系統的 L1/L2 層。
+            </p>
+
+            <!-- Spec Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8 font-sans">
+                <div class="border border-[#E2DCD0] bg-white p-5 rounded-lg">
+                    <div class="text-xs font-bold text-gray-400 uppercase mb-1">Knowledge Write</div>
+                    <div class="text-lg font-bold text-gray-800 mb-2">自動化知識編纂</div>
+                    <p class="text-sm text-gray-600">系統自動提取高價值結論與未解決爭議，透過 Skills 管線寫入本地 Markdown 檔案，標註「知識血緣」。</p>
+                </div>
+                <div class="border border-[#E2DCD0] bg-white p-5 rounded-lg">
+                    <div class="text-xs font-bold text-gray-400 uppercase mb-1">Retrieval Base</div>
+                    <div class="text-lg font-bold text-gray-800 mb-2">混合檢索基礎設施</div>
+                    <p class="text-sm text-gray-600">不依賴單一雲端向量資料庫，而是建立具備本地 BM25 與向量重排的混合搜尋引擎，確保私有知識的永久存取。</p>
+                </div>
+                <div class="border border-[#E2DCD0] bg-white p-5 rounded-lg">
+                    <div class="text-xs font-bold text-gray-400 uppercase mb-1">Performance</div>
+                    <div class="text-lg font-bold text-gray-800 mb-2">編排開銷優化</div>
+                    <p class="text-sm text-gray-600">解決 13 併發請求的延遲問題，導入階梯式專家激活機制（Step-wise Activation），降低 The Orchestration Tax。</p>
+                </div>
+                <div class="border border-[#E2DCD0] bg-white p-5 rounded-lg">
+                    <div class="text-xs font-bold text-gray-400 uppercase mb-1">Validation</div>
+                    <div class="text-lg font-bold text-gray-800 mb-2">人類哨兵機制</div>
+                    <p class="text-sm text-gray-600">將最終決策權交還人類，AI 處理邏輯展開與資料準備，人類進行最終的邊界驗證與完整性監控。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 07 -->
+        <section id="section-07" class="max-w-3xl mx-auto px-6 fade-in mb-10">
+            <h2 class="text-sm font-sans font-bold tracking-widest text-[#8C3A3A] mb-2 uppercase">07 / Future Outlook</h2>
+            <h3 class="text-3xl font-bold mb-8">邁向無特定模型的研發生態</h3>
+            
+            <p class="mb-6">
+                展望未來，本系統的終極目標是建立一個<strong>「不綁定特定供應商（Model-Agnostic）」</strong>的研究生態。無論是利用 Anthropic 的 Claude 系列、Google 的超長脈絡處理能力，或是私有部署的開源模型，數位詮釋學體系都能靈活調度。
+            </p>
+            <p class="mb-6">
+                這不僅僅是一次工具的升級，更是研究典範的轉移。研究者將從處理繁瑣資料的苦役中解放出來，轉而專注於更高層次的框架設計與跨界融合。
+            </p>
+            <p class="mb-6 font-bold text-[#4A5D4E]">
+                這是一個協作的未來：AI 負責邊界的無盡拓展，而人類，負責握住那把決定意義的尺。
+            </p>
+        </section>
+        
+        <!-- Annotations List Section -->
+        <section id="section-annotations" class="max-w-3xl mx-auto px-6 fade-in mt-24 pt-12 border-t-2 border-[#E2DCD0]">
+            <h3 class="text-2xl font-bold mb-8 font-display">名詞注釋一覽</h3>
+            <div class="space-y-6 font-sans text-sm text-gray-700">
+                <div class="pl-4 border-l-2 border-[#8C3A3A]">
+                    <p class="mb-1"><span class="font-bold text-gray-900">【註1】Agentic Workflows（代理式工作流）</span></p>
+                    <p>一種讓 AI 具備自主規劃、執行與反思能力的工作模式。相較於傳統的一問一答，代理能將大任務拆解，並調用外部工具（如搜尋、終端機）逐步完成。在本計畫中，這代表 AI 能自動化文獻爬梳與交叉比對的繁瑣過程。</p>
+                </div>
+                <div class="pl-4 border-l-2 border-[#8C3A3A]">
+                    <p class="mb-1"><span class="font-bold text-gray-900">【註2】MCP（模型脈絡協定）</span></p>
+                    <p>Model Context Protocol，一種標準化介面，讓 AI 模型能安全地連接本地資料與外部工具。這解決了 AI 缺乏最新或私有知識的痛點，使「數位詮釋學體系」得以無縫存取研究者的 Zotero 文獻庫與本地筆記。</p>
+                </div>
+                <div class="pl-4 border-l-2 border-[#8C3A3A]">
+                    <p class="mb-1"><span class="font-bold text-gray-900">【註3】LLM Wiki（大型語言模型維基）</span></p>
+                    <p>由知名 AI 學者 Andrej Karpathy 提出的概念，主張利用大型語言模型自動編纂與維護個人知識庫。在本系統中，它負責把專家辯論的結論「沉澱」成結構化的條目，實現專屬領域知識的長期複利。</p>
+                </div>
+                <div class="pl-4 border-l-2 border-[#8C3A3A]">
+                    <p class="mb-1"><span class="font-bold text-gray-900">【註4】Google Antigravity</span></p>
+                    <p>一款次世代的 AI 整合開發環境（IDE），主打將研究構想在幾小時內轉化為可用原型。它提供多代理協作的畫布與原生脈絡管理，是本計畫中替代方案（No-Claude Path）的核心實施平台。</p>
+                </div>
+                <div class="pl-4 border-l-2 border-[#8C3A3A]">
+                    <p class="mb-1"><span class="font-bold text-gray-900">【註5】RAG（檢索增強生成）</span></p>
+                    <p>Retrieval-Augmented Generation，一種結合外部資料庫檢索與文字生成的技術。雖然能減少 AI 幻覺，但常遭遇「引用漂移」問題；本計畫透過「誠信閘門」強制查核來源，克服了傳統 RAG 的致命傷。</p>
+                </div>
+                <div class="pl-4 border-l-2 border-[#8C3A3A]">
+                    <p class="mb-1"><span class="font-bold text-gray-900">【註6】Zotero</span></p>
+                    <p>一款免費且開源的跨平台文獻管理軟體，廣泛應用於學術界。透過 API 與 AI 代理串接後，它成為系統中所有論點的「事實查核基礎」，確保每一項學術詮釋都有堅實的文獻血緣。</p>
+                </div>
+                <div class="pl-4 border-l-2 border-[#8C3A3A]">
+                    <p class="mb-1"><span class="font-bold text-gray-900">【註7】Claude Code</span></p>
+                    <p>Anthropic 推出的 AI 程式碼助手與代理工具。它能在終端機中運行，具備讀取專案全貌、自動編輯檔案與執行指令的能力。在本計畫中可用於構建與驅動專家辯論引擎。</p>
+                </div>
+                <div class="pl-4 border-l-2 border-[#8C3A3A]">
+                    <p class="mb-1"><span class="font-bold text-gray-900">【註8】Memex (1945)</span></p>
+                    <p>由 Vannevar Bush 提出的假想設備，旨在儲存個人所有書籍、紀錄與通訊，並透過「聯想軌跡（Associative trails）」進行檢索。被視為超文本（Hypertext）與現代維基百科的哲學起源。</p>
+                </div>
+                <div class="pl-4 border-l-2 border-[#8C3A3A]">
+                    <p class="mb-1"><span class="font-bold text-gray-900">【註9】知識血緣追蹤 (Knowledge Provenance Tracking)</span></p>
+                    <p>在知識庫的 Metadata（如 YAML）中強制記錄該條目的原始出處（DOI、網址）與生成過程。這能確保每一筆知識的「合法性」，方便未來進行事實查核與溯源。</p>
+                </div>
+                <div class="pl-4 border-l-2 border-[#8C3A3A]">
+                    <p class="mb-1"><span class="font-bold text-gray-900">【註10】系統熵增風險 (Entropy Risk)</span></p>
+                    <p>源自熱力學的概念，在此指隨著時間推移，個人知識庫因缺乏有效維護而逐漸陷入無序、矛盾與冗餘的狀態，最終導致知識庫失去信任與檢索價值。</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-[#E2DCD0] py-8">
+        <div class="max-w-5xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center font-sans text-xs text-gray-500">
+            <p><a href="https://www.instagram.com/shmuel310/">@shmuel310</a></p>
+            <div class="mt-4 md:mt-0 flex space-x-4">
+                <a href="#" class="hover:text-[#8C3A3A] transition-colors">Digital Hermeneutics Framework</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Annotation Data
+        const annotations = {
+            'agentic-workflow': {
+                title: 'Agentic Workflows（代理式工作流）',
+                desc: '一種讓 AI 具備自主規劃、執行與反思能力的工作模式。相較於傳統一問一答，代理能將大任務拆解，並調用外部工具自動完成繁瑣任務。'
+            },
+            'mcp': {
+                title: 'MCP（模型脈絡協定）',
+                desc: 'Model Context Protocol，一種標準化介面，讓 AI 模型能安全地連接本地資料與外部工具，無縫存取私有文獻庫。'
+            },
+            'llm-wiki': {
+                title: 'LLM Wiki',
+                desc: '主張利用大型語言模型自動編纂與維護個人知識庫。在本系統負責把辯論結論沉澱成結構化條目，實現知識複利。'
+            },
+            'antigravity': {
+                title: 'Google Antigravity',
+                desc: '次世代 AI 開發環境（IDE），主打快速將構想轉化為原型。提供多代理協作的畫布，是本計畫的關鍵實施平台之一。'
+            },
+            'rag': {
+                title: 'RAG（檢索增強生成）',
+                desc: '結合檢索與生成的技術。雖能減少幻覺但常遇引用錯誤；本計畫透過「誠信閘門」強制比對來源以克服此痛點。'
+            },
+            'zotero': {
+                title: 'Zotero',
+                desc: '開源的文獻管理軟體。透過 API 與 AI 代理串接後，作為系統的「事實查核資料庫」，確保詮釋具備文獻血緣。'
+            },
+            'claude-code': {
+                title: 'Claude Code',
+                desc: '能於終端機運行的 AI 代理工具，具備專案脈絡理解與自動編輯能力，用於構建本體系的自動化腳本與工具鏈。'
+            },
+            'memex': {
+                title: 'Memex (1945)',
+                desc: 'Vannevar Bush 提出的假想設備，強調個人知識的聯想軌跡與結構化策展，是現代超文本與個人知識庫的哲學起源。'
+            },
+            'provenance': {
+                title: '知識血緣追蹤 (Knowledge Provenance)',
+                desc: '在檔案屬性中強制記錄每條知識的來源出處（如 Zotero 引用、作者）與生成節點，確保知識可溯源且具備學術誠信。'
+            },
+            'entropy-risk': {
+                title: '系統熵增風險 (Entropy Risk)',
+                desc: '指知識庫隨著時間推移，因缺乏除錯與更新而導致資訊矛盾、過期與混亂的無序狀態。'
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Intersection Observer for fade-in elements
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+
+            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+            // TOC Drawer Logic
+            const tocBtn = document.getElementById('toc-btn');
+            const closeTocBtn = document.getElementById('close-toc');
+            const tocDrawer = document.getElementById('toc-drawer');
+            const drawerOverlay = document.getElementById('drawer-overlay');
+            const tocLinks = tocDrawer.querySelectorAll('a');
+
+            function toggleDrawer() {
+                const isClosed = tocDrawer.classList.contains('translate-x-full');
+                if (isClosed) {
+                    tocDrawer.classList.remove('translate-x-full');
+                    drawerOverlay.classList.remove('hidden');
+                    setTimeout(() => drawerOverlay.classList.add('opacity-100'), 10);
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    tocDrawer.classList.add('translate-x-full');
+                    drawerOverlay.classList.remove('opacity-100');
+                    setTimeout(() => drawerOverlay.classList.add('hidden'), 300);
+                    document.body.style.overflow = '';
+                }
+            }
+
+            tocBtn.addEventListener('click', toggleDrawer);
+            closeTocBtn.addEventListener('click', toggleDrawer);
+            drawerOverlay.addEventListener('click', toggleDrawer);
+            
+            tocLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    toggleDrawer();
+                });
+            });
+
+            // Tooltip Logic
+            const tooltip = document.getElementById('global-tooltip');
+            const tooltipTitle = document.getElementById('tooltip-title');
+            const tooltipContent = document.getElementById('tooltip-content');
+            const triggers = document.querySelectorAll('.annotation-trigger');
+
+            let activeTrigger = null;
+
+            function positionTooltip(rect) {
+                const tooltipRect = tooltip.getBoundingClientRect();
+                const scrollY = window.scrollY;
+                const scrollX = window.scrollX;
+                
+                let top = rect.bottom + scrollY + 10;
+                let left = rect.left + scrollX;
+
+                if (left + tooltipRect.width > window.innerWidth - 20) {
+                    left = window.innerWidth - tooltipRect.width - 20;
+                }
+                
+                if (rect.bottom + tooltipRect.height + 20 > window.innerHeight) {
+                    top = rect.top + scrollY - tooltipRect.height - 10;
+                }
+
+                tooltip.style.top = `${top}px`;
+                tooltip.style.left = `${left}px`;
+            }
+
+            triggers.forEach(trigger => {
+                trigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const annotationKey = trigger.getAttribute('data-annotation');
+                    const data = annotations[annotationKey];
+                    
+                    if (data) {
+                        tooltipTitle.textContent = data.title;
+                        tooltipContent.textContent = data.desc;
+                        
+                        tooltip.style.visibility = 'hidden';
+                        tooltip.style.display = 'block';
+                        
+                        requestAnimationFrame(() => {
+                            positionTooltip(trigger.getBoundingClientRect());
+                            tooltip.style.display = '';
+                            tooltip.style.visibility = '';
+                            tooltip.classList.add('active');
+                            activeTrigger = trigger;
+                        });
+                    }
+                });
+            });
+
+            document.addEventListener('click', (e) => {
+                if (activeTrigger && !tooltip.contains(e.target) && e.target !== activeTrigger) {
+                    tooltip.classList.remove('active');
+                    activeTrigger = null;
+                }
+            });
+
+            document.addEventListener('scroll', () => {
+                if (activeTrigger) {
+                    tooltip.classList.remove('active');
+                    activeTrigger = null;
+                }
+            }, { passive: true });
+        });
+    </script>
+</body>
+</html>
