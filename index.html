@@ -168,7 +168,7 @@
         <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-4">
                 <span class="font-sans text-xs font-bold tracking-widest uppercase text-white bg-[#4A5D4E] px-3 py-1 rounded-full">研究架構白皮書</span>
-                <span class="font-sans text-sm font-medium text-gray-600 hidden sm:block">數位詮釋學體系 v2.2</span>
+                <span class="font-sans text-sm font-medium text-gray-600 hidden sm:block">數位詮釋學體系 v2.0 營運版 · 2026.10</span>
             </div>
             <button id="toc-btn" class="font-sans text-sm font-medium flex items-center space-x-2 text-gray-800 hover:text-[#8C3A3A] transition-colors">
                 <span>目錄</span>
@@ -192,9 +192,12 @@
                 <a href="#section-02" class="block text-gray-600 hover:text-[#8C3A3A] hover:translate-x-1 transition-transform">02 / 整體架構：兩套工具，一個大腦</a>
                 <a href="#section-03" class="block text-gray-600 hover:text-[#8C3A3A] hover:translate-x-1 transition-transform">03 / 十二＋一位 AI 專家：他們爭什麼？</a>
                 <a href="#section-04" class="block text-gray-600 hover:text-[#8C3A3A] hover:translate-x-1 transition-transform">04 / LLM Council：動態辯論工作流</a>
-                <a href="#section-05" class="block text-gray-600 hover:text-[#8C3A3A] hover:translate-x-1 transition-transform">05 / LLM Wiki：對抗熵增的知識庫</a>
-                <a href="#section-06" class="block text-gray-600 hover:text-[#8C3A3A] hover:translate-x-1 transition-transform">06 / 基礎設施：檢索與性能優化</a>
-                <a href="#section-07" class="block text-gray-600 hover:text-[#8C3A3A] hover:translate-x-1 transition-transform">07 / 邁向無特定模型的研發生態</a>
+                <a href="#section-evidence" class="block text-gray-600 hover:text-[#8C3A3A] hover:translate-x-1 transition-transform">05 / 證據引擎：Sefaria 與 OpenGNT</a>
+                <a href="#section-05" class="block text-gray-600 hover:text-[#8C3A3A] hover:translate-x-1 transition-transform">06 / LLM Wiki：對抗熵增的知識庫</a>
+                <a href="#section-census" class="block text-gray-600 hover:text-[#8C3A3A] hover:translate-x-1 transition-transform">07 / 營運進度與研究缺口</a>
+                <a href="#section-downstream" class="block text-gray-600 hover:text-[#8C3A3A] hover:translate-x-1 transition-transform">08 / 下游應用</a>
+                <a href="#section-06" class="block text-gray-600 hover:text-[#8C3A3A] hover:translate-x-1 transition-transform">09 / 基礎設施：檢索與性能優化</a>
+                <a href="#section-07" class="block text-gray-600 hover:text-[#8C3A3A] hover:translate-x-1 transition-transform">10 / 邁向無特定模型的研發生態與路線圖</a>
                 <a href="#section-annotations" class="block text-gray-600 hover:text-[#8C3A3A] mt-8 pt-4 border-t border-gray-100">完整注釋列表</a>
             </nav>
         </div>
@@ -218,8 +221,10 @@
             </h1>
             <p class="text-xl text-gray-600 font-sans font-light leading-relaxed mb-10">
                 結合代理式工作流與自動化維基的次世代學術研究架構。<br>
-                這是一份寫給所有人的藍圖——探討 AI 如何突破框架鎖定，重塑嚴謹的知識生產過程。
+                2026 年 10 月，它已從概念藍圖進入營運階段：608 個經文段落、4,627 個互聯筆記，皆經對抗式審計與來源標註。
             </p>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-10 font-sans"><div class="bg-white border border-[#E2DCD0] rounded-lg p-4 text-center"><div class="font-display text-2xl font-bold text-[#8C3A3A]">608</div><div class="text-xs text-gray-500 mt-1">已完成 Pericopes</div></div><div class="bg-white border border-[#E2DCD0] rounded-lg p-4 text-center"><div class="font-display text-2xl font-bold text-[#8C3A3A]">4,627</div><div class="text-xs text-gray-500 mt-1">Wiki 節點</div></div><div class="bg-white border border-[#E2DCD0] rounded-lg p-4 text-center"><div class="font-display text-2xl font-bold text-[#8C3A3A]">5,933</div><div class="text-xs text-gray-500 mt-1">[VERIFIED]</div></div><div class="bg-white border border-[#E2DCD0] rounded-lg p-4 text-center"><div class="font-display text-2xl font-bold text-[#8C3A3A]">718</div><div class="text-xs text-gray-500 mt-1">[DISPUTED]</div></div><div class="bg-white border border-[#E2DCD0] rounded-lg p-4 text-center"><div class="font-display text-2xl font-bold text-[#8C3A3A]">1,804</div><div class="text-xs text-gray-500 mt-1">[VETOED]</div></div><div class="bg-white border border-[#E2DCD0] rounded-lg p-4 text-center"><div class="font-display text-2xl font-bold text-[#8C3A3A]">80/80</div><div class="text-xs text-gray-500 mt-1">單元測試通過</div></div></div>
 
             <!-- Editor's Note -->
             <div class="bg-white border border-[#E2DCD0] p-6 rounded-lg shadow-sm font-sans relative overflow-hidden">
@@ -246,7 +251,7 @@
                 傳統的閱讀與筆記方式，受限於人類大腦處理資訊的頻寬。當我們面對海量的文獻、古老的文本或錯綜複雜的學派爭論時，知識往往散落在不同的資料夾與大腦記憶的角落，無法形成有效的交互參照；這便是「知識孤島」。
             </p>
             <p class="mb-6">
-                更致命的是「框架鎖定」。人類學者在進行文本詮釋時，無可避免地會帶入自身的學派背景與偏見。一旦確立了某種視角，便很難再跳脫出來，從完全對立的方法論去審視同一份材料。
+                兩者疊加，便產生引用漂移、平行對比狂熱（Parallelomania）與虔誠式講道美化。更致命的是「框架鎖定」。人類學者在進行文本詮釋時，無可避免地會帶入自身的學派背景與偏見。一旦確立了某種視角，便很難再跳脫出來——坊間講章更常犯 D.A. Carson 所稱的「釋經謬誤」（字根謬誤、整體語義轉移等），從完全對立的方法論去審視同一份材料。
             </p>
             <div class="quote-box p-6 my-8 font-serif italic text-lg text-gray-700 rounded-r-lg">
                 「數位詮釋學體系試圖打破的，正是人類在處理龐大文本時的認知極限與視野盲區。我們需要的不是一個幫我們『寫論文』的工具，而是一個能強迫我們『換位思考』的數位大腦。」
@@ -274,6 +279,10 @@
                     <p class="text-gray-700">
                         執行層產生的辯論結果與高價值結論，不能閱後即焚。系統會將這些洞見自動「編纂」成結構化的 Markdown 筆記（例如 Obsidian），形成一個專屬的知識庫。這確保了系統具備「知識複利」的能力，讓這個大腦越用越聰明。
                     </p>
+                </div>
+                <div class="step-list-item" data-step="3">
+                    <h4 class="font-bold text-xl mb-2">下游生成層：解耦的專業技能</h4>
+                    <p class="text-gray-700">上游 Wiki 維持純學術英文、格式中立；查經、講道、論文、書評等技能透過共用的 WikiReader 按需讀取，不污染上游的學術中立性。</p>
                 </div>
             </div>
         </section>
@@ -354,7 +363,7 @@
                     <div class="absolute top-0 left-0 w-1.5 h-full bg-[#8C3A3A]"></div>
                     <div class="text-[10px] font-bold text-[#8C3A3A] uppercase tracking-wider mb-1">Expert 13 (Chaos Node)</div>
                     <div class="text-base font-bold text-gray-900 mb-2">反詮釋學者 (The Devil's Advocate)</div>
-                    <p class="text-sm text-gray-700 leading-relaxed">這是系統的「誠信與邏輯防線」。唯一不負責提出新論點的角色，其任務扮演嚴苛的盲審員。透過強制調用工具查核資料庫（如 Zotero），專職尋找上述 12 人共識中的邏輯謬誤、證據斷層與「過度詮釋」，防止 AI 陷入集體盲思。</p>
+                    <p class="text-sm text-gray-700 leading-relaxed">這是系統的「誠信與邏輯防線」。唯一不負責提出新論點的角色，其任務扮演嚴苛的盲審員。依 Carson《釋經謬誤》逐項審計（字根謬誤、語義時代錯置、整體語義轉移），並以 Hays 七項準則（Availability、Volume、Recurrence、Thematic Coherence、Historical Plausibility、History of Interpretation、Satisfaction）檢驗經文呼應；同時強制查核 NotebookLM 資料庫，實施「零幽靈引用」。</p>
                 </div>
             </div>
 
@@ -381,10 +390,11 @@
                     <div class="flex">
                         <div class="w-16 flex-shrink-0 text-red-400 font-bold text-sm">Expert 13</div>
                         <div class="flex-1 bg-red-900/20 p-4 rounded-lg rounded-tl-none border border-red-900/50 text-gray-200">
-                            <strong>否決。</strong>你們的推論發生了「過度詮釋」。根據 Zotero 資料庫中的當代文獻查核，該字根在同時期的世俗商業合約中僅作為普通動詞使用。你們的共識缺乏足夠的一手文獻支撐。
+                            <strong>否決。</strong>你們的推論發生了「過度詮釋」。依 Carson 的字根謬誤準則，並經 NotebookLM 評註資料庫查核，該字根在同時期的世俗商業合約中僅作為普通動詞使用。你們的共識缺乏足夠的一手文獻支撐。
                         </div>
                     </div>
                 </div>
+                <div class="grid grid-cols-3 gap-2 mt-6 text-xs text-center"><div class="bg-green-900/30 border border-green-800/60 rounded p-2"><b class="text-green-300">[VERIFIED]</b><br>一手文本與評註共識支持</div><div class="bg-amber-900/30 border border-amber-800/60 rounded p-2"><b class="text-amber-300">[DISPUTED]</b><br>方法穩健的真實學界爭議</div><div class="bg-red-900/30 border border-red-800/60 rounded p-2"><b class="text-red-300">[VETOED]</b><br>謬誤／幻覺，隔離不入綜合</div></div>
                 <p class="text-sm text-gray-400 mt-6 pt-4 border-t border-gray-700">
                     這種類似分散式系統中「混沌工程」的設計，是本計畫建立「學術誠信」技術防線的神來之筆。
                 </p>
@@ -406,7 +416,7 @@
                     <div class="timeline-node"></div>
                     <h4 class="font-bold text-lg text-gray-900 mb-1">Stage 0: 智能路由 (Router Classifier)</h4>
                     <p class="text-gray-600 text-sm leading-relaxed">
-                        並非每次分析都需要叫齊 12 人。路由引擎會根據輸入文本的特徵（例如：是否包含大量古語、是否涉及教義爭議），動態選擇最適合的專家組合，以此降低無效的「編排開銷 (Orchestration Tax)」。
+                        並非每次分析都需要叫齊 12 人。路由引擎會根據輸入文本的特徵（例如：是否包含大量古語、是否涉及教義爭議），依 registry.json（60 個專業 NotebookLM 資料庫）動態選擇最適合的專家組合，以此降低無效的「編排開銷 (Orchestration Tax)」。
                     </p>
                 </div>
                 
@@ -433,7 +443,7 @@
                     <div class="timeline-node highlight"></div>
                     <h4 class="font-bold text-lg text-[#8C3A3A] mb-1">Stage 2.5: 誠信閘門 (Integrity Gate)</h4>
                     <p class="text-gray-600 text-sm leading-relaxed">
-                        由第 13 位專家（反詮釋學者）強制介入。他會調用外部 API 查核 <span class="annotation-trigger" data-annotation="zotero">Zotero</span> 資料庫，驗證前階段產生的「共識」是否具備真實的文獻血緣。任何查無實證的「幻覺」或「引用漂移」都將在此被無情剔除。
+                        由第 13 位專家（反詮釋學者）強制介入。他會調用外部 API 查核 <span class="annotation-trigger" data-annotation="notebooklm">NotebookLM</span> 資料庫，驗證前階段產生的「共識」是否具備真實的文獻血緣。任何查無實證的「幻覺」或「引用漂移」都將在此被無情剔除。
                     </p>
                 </div>
 
@@ -442,15 +452,26 @@
                     <div class="timeline-node"></div>
                     <h4 class="font-bold text-lg text-gray-900 mb-1">Stage 3: 綜合與產出 (Synthesis & Output)</h4>
                     <p class="text-gray-600 text-sm leading-relaxed">
-                        歷經高壓測試後存活下來的高價值論點與未解決的學派爭議，將被整合為一份結構化的最終報告，準備送入系統的「記憶大腦」中沉澱。
+                        歷經高壓測試後存活的論點與未決爭議，被整合為結構化報告，沉澱進六層 Wiki；通過閘門的真實學術僵局，則進入 L5 研究缺口登記冊。
                     </p>
                 </div>
             </div>
         </section>
 
+        <!-- Section: Evidence -->
+        <section id="section-evidence" class="max-w-3xl mx-auto px-6 fade-in mb-20">
+            <h2 class="text-sm font-sans font-bold tracking-widest text-[#8C3A3A] mb-2 uppercase">05 / The Evidence</h2>
+            <h3 class="text-3xl font-bold mb-8">證據引擎：直連一手古代文本</h3>
+            <p class="mb-6">商業 LLM 常依賴英文譯本或訓練記憶中未經驗證的原文。DHF 以程式化方式直接存取古代語料，讓每項論證都有一手文本可核。</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8 font-sans">
+                <div class="border border-t-4 border-t-[#d97706] border-[#E2DCD0] bg-white p-5 rounded-lg shadow-sm"><div class="font-bold text-gray-900 mb-1">Sefaria API（希伯來聖經）</div><p class="text-sm text-gray-600 leading-relaxed">馬所拉文本（含母音與 te'amim 斷句符號）、BDB 詞彙形態、亞蘭文 Targumim（Onkelos、Jonathan、Neofiti），以及 Rashi、Ramban、Ibn Ezra 等拉比註釋，避免基督教取代論偏見。</p></div>
+                <div class="border border-t-4 border-t-[#2563eb] border-[#E2DCD0] bg-white p-5 rounded-lg shadow-sm"><div class="font-bold text-gray-900 mb-1">OpenGNT（希臘文新約）</div><p class="text-sm text-gray-600 leading-relaxed">NA28 等值希臘文、Robinson RMAC 形態分析、Mounce 字典，以及 Levinsohn 話語語法；以 Porter、Campbell、Fanning 的動詞體貌理論取代時間式模型。</p></div>
+            </div>
+        </section>
+
         <!-- Section 05: LLM Wiki -->
         <section id="section-05" class="max-w-3xl mx-auto px-6 fade-in mb-20">
-            <h2 class="text-sm font-sans font-bold tracking-widest text-[#8C3A3A] mb-2 uppercase">05 / The Memory</h2>
+            <h2 class="text-sm font-sans font-bold tracking-widest text-[#8C3A3A] mb-2 uppercase">06 / The Memory</h2>
             <h3 class="text-3xl font-bold mb-8">LLM Wiki：對抗熵增的知識庫</h3>
             
             <p class="mb-6">
@@ -461,24 +482,8 @@
             </p>
 
             <!-- 3-Tier Architecture -->
-            <h4 class="font-bold text-xl mt-10 mb-4">文件三層架構 (L0 / L1 / L2 Ontology)</h4>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-6 font-sans">
-                <div class="bg-white border-t-4 border-gray-300 p-5 rounded-lg shadow-sm">
-                    <div class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Layer 0</div>
-                    <div class="font-bold text-lg text-gray-900 mb-2">原始資料層 (Raw)</div>
-                    <p class="text-sm text-gray-600">未經加工的起點。包含匯入的原始文獻、外部檢索的快取紀錄與原始會議逐字稿。</p>
-                </div>
-                <div class="bg-white border-t-4 border-[#4A5D4E] p-5 rounded-lg shadow-sm">
-                    <div class="text-xs font-bold text-[#4A5D4E] uppercase tracking-widest mb-1">Layer 1</div>
-                    <div class="font-bold text-lg text-gray-900 mb-2">原子概念層 (Atomic)</div>
-                    <p class="text-sm text-gray-600">經過 Council 專家引擎萃取、驗證並打散的單一概念筆記（Atomic Notes），是知識庫的磚塊。</p>
-                </div>
-                <div class="bg-white border-t-4 border-[#8C3A3A] p-5 rounded-lg shadow-sm">
-                    <div class="text-xs font-bold text-[#8C3A3A] uppercase tracking-widest mb-1">Layer 2</div>
-                    <div class="font-bold text-lg text-gray-900 mb-2">宏觀綜合層 (Synthesis)</div>
-                    <p class="text-sm text-gray-600">高階綜合視角與領域地圖（MOC）。將多個 L1 節點相互連接，形成宏觀且持續迭代的論述。</p>
-                </div>
-            </div>
+            <h4 class="font-bold text-xl mt-10 mb-4">文件六層架構 (L0–L5 Ontology)</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-6 font-sans"><div class="bg-white border-t-4 border-gray-300 p-5 rounded-lg shadow-sm"><div class="text-xs font-bold text-[#8C3A3A] tracking-widest mb-1">L0</div><div class="font-bold text-gray-900 mb-1">原始逐字稿</div><p class="text-sm text-gray-600">完整辯論、質詢與否決的審計軌跡</p></div><div class="bg-white border-t-4 border-[#4A5D4E] p-5 rounded-lg shadow-sm"><div class="text-xs font-bold text-[#8C3A3A] tracking-widest mb-1">L1</div><div class="font-bold text-gray-900 mb-1">原子概念筆記</div><p class="text-sm text-gray-600">詞彙、地理、人物、風俗等單一概念</p></div><div class="bg-white border-t-4 border-[#8C3A3A] p-5 rounded-lg shadow-sm"><div class="text-xs font-bold text-[#8C3A3A] tracking-widest mb-1">L2</div><div class="font-bold text-gray-900 mb-1">段落綜合 (MOC)</div><p class="text-sm text-gray-600">Booth/Williams 動機與命題、論述結構</p></div><div class="bg-white border-t-4 border-[#4A5D4E] p-5 rounded-lg shadow-sm"><div class="text-xs font-bold text-[#8C3A3A] tracking-widest mb-1">L3</div><div class="font-bold text-gray-900 mb-1">神學註釋</div><p class="text-sm text-gray-600">單一大意、逐段釋義、講道種子</p></div><div class="bg-white border-t-4 border-[#8C3A3A] p-5 rounded-lg shadow-sm"><div class="text-xs font-bold text-[#8C3A3A] tracking-widest mb-1">L4</div><div class="font-bold text-gray-900 mb-1">宏觀敘事專論</div><p class="text-sm text-gray-600">全書敘事架構與不中斷辯證鏈</p></div><div class="bg-white border-t-4 border-gray-800 p-5 rounded-lg shadow-sm"><div class="text-xs font-bold text-[#8C3A3A] tracking-widest mb-1">L5</div><div class="font-bold text-gray-900 mb-1">正典索引與缺口登記</div><p class="text-sm text-gray-600">66 卷索引，彙整 [DISPUTED] 節點</p></div></div>
 
             <!-- Entropy Risk & Knowledge Provenance Box -->
             <div class="bg-orange-50/60 border border-orange-200/60 p-8 rounded-xl mt-10 relative">
@@ -490,7 +495,7 @@
                     任何長期營運的個人知識庫或 Wiki，最終都會面臨「<span class="annotation-trigger" data-annotation="entropy-risk">熵增風險</span>」——筆記逐漸混亂、過期、或是不同文獻間產生無法追溯的矛盾。
                 </p>
                 <p class="text-gray-700 leading-relaxed font-medium">
-                    LLM Wiki 的解法是導入「<span class="annotation-trigger" data-annotation="provenance">知識血緣追蹤 (Knowledge Provenance Tracking)</span>」。
+                    LLM Wiki 的解法是導入「<span class="annotation-trigger" data-annotation="provenance">知識血緣追蹤 (Knowledge Provenance Tracking)</span>」：每則斷言可回溯至 L0 會議、來源評註與驗證它的一手文本。
                 </p>
                 <p class="text-sm text-gray-600 mt-4 border-t border-orange-200/60 pt-4">
                     在 YAML Frontmatter 中，系統會強制記錄每一條 L1/L2 筆記是從哪個 L0 來源提取、由哪位 AI Agent 判定、且經歷過幾次迭代。<strong>「錯誤依然可能進入系統，但除非知識圖譜反覆強化這個錯誤，否則它不會作為『真理』傳播。」</strong>從此，人類的日常知識工作變成了針對高雜訊區域的「分診（Triage）」，而非無止境的手動清理。
@@ -498,16 +503,33 @@
             </div>
         </section>
 
+        <!-- Section: Progress -->
+        <section id="section-census" class="max-w-3xl mx-auto px-6 fade-in mb-20">
+            <h2 class="text-sm font-sans font-bold tracking-widest text-[#8C3A3A] mb-2 uppercase">07 / Progress</h2>
+            <h3 class="text-3xl font-bold mb-8">營運進度與研究缺口登記冊</h3>
+            <p class="mb-6">五大正典語料（創世記、詩篇、馬太福音、路加－使徒行傳、羅馬書）共 <strong>608</strong> 個段落已完成，沉澱為 <strong>4,627</strong> 個節點：L0 756、L1 2,138、L2 810、L3 808、L4 65，另有 9 份查經與 10 份講稿。</p>
+            <div class="space-y-3 my-8 font-sans bg-white border border-[#E2DCD0] rounded-lg p-6"><div class="flex items-center text-sm"><div class="w-32 shrink-0 text-gray-600">Genesis</div><div class="flex-1 bg-gray-100 rounded h-4 mr-3"><div class="h-4 rounded bg-[#4A5D4E]" style="width:69.4%"></div></div><div class="w-8 text-right font-bold">120</div></div><div class="flex items-center text-sm"><div class="w-32 shrink-0 text-gray-600">Psalms</div><div class="flex-1 bg-gray-100 rounded h-4 mr-3"><div class="h-4 rounded bg-[#4A5D4E]" style="width:86.7%"></div></div><div class="w-8 text-right font-bold">150</div></div><div class="flex items-center text-sm"><div class="w-32 shrink-0 text-gray-600">Matthew</div><div class="flex-1 bg-gray-100 rounded h-4 mr-3"><div class="h-4 rounded bg-[#4A5D4E]" style="width:64.7%"></div></div><div class="w-8 text-right font-bold">112</div></div><div class="flex items-center text-sm"><div class="w-32 shrink-0 text-gray-600">Luke-Acts</div><div class="flex-1 bg-gray-100 rounded h-4 mr-3"><div class="h-4 rounded bg-[#4A5D4E]" style="width:100.0%"></div></div><div class="w-8 text-right font-bold">173</div></div><div class="flex items-center text-sm"><div class="w-32 shrink-0 text-gray-600">Romans</div><div class="flex-1 bg-gray-100 rounded h-4 mr-3"><div class="h-4 rounded bg-[#4A5D4E]" style="width:30.1%"></div></div><div class="w-8 text-right font-bold">52</div></div><div class="flex items-center text-sm"><div class="w-32 shrink-0 text-gray-600">Ephesians（試行）</div><div class="flex-1 bg-gray-100 rounded h-4 mr-3"><div class="h-4 rounded bg-[#4A5D4E]" style="width:1.5%"></div></div><div class="w-8 text-right font-bold">1</div></div></div>
+            <p class="mb-6">DHF 把學界分歧視為最高價值的產出：通過誠信閘門的真實僵局會寫入 <strong>L5 研究缺口登記冊</strong>。光是羅馬書就已在 24 個段落中標定 <strong>27 項</strong>博士級研究缺口（如 pistis Christou），附動機／命題公式與主要對話者，供論文技能直接取用。</p>
+        </section>
+
+        <!-- Section: Downstream -->
+        <section id="section-downstream" class="max-w-3xl mx-auto px-6 fade-in mb-20">
+            <h2 class="text-sm font-sans font-bold tracking-widest text-[#8C3A3A] mb-2 uppercase">08 / Downstream</h2>
+            <h3 class="text-3xl font-bold mb-8">下游應用：同一座 Wiki，多種產出</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8 font-sans"><div class="border border-[#E2DCD0] bg-white p-5 rounded-lg shadow-sm"><div class="font-bold text-gray-900 mb-1">dhf-bible-study · 閉環查經</div><p class="text-sm text-gray-600 leading-relaxed">4 步驟 Logic Flow（破冰→觀察→詮釋→應用），繁體中文，含 Friction Test 自審。</p></div><div class="border border-[#E2DCD0] bg-white p-5 rounded-lg shadow-sm"><div class="font-bold text-gray-900 mb-1">dhf-sermon-crafter · 講道講稿</div><p class="text-sm text-gray-600 leading-relaxed">4,000–5,000 字解經講章（書面或粵語口語），100 分講道評分表。</p></div><div class="border border-[#E2DCD0] bg-white p-5 rounded-lg shadow-sm"><div class="font-bold text-gray-900 mb-1">dhf-thesis-architect · 學術論文</div><p class="text-sm text-gray-600 leading-relaxed">5,000–12,000 字期刊文章／論文章節，Turabian 8 + SBL，引註逐筆驗證。</p></div><div class="border border-[#E2DCD0] bg-white p-5 rounded-lg shadow-sm"><div class="font-bold text-gray-900 mb-1">dhf-book-reviewer · 專書書評</div><p class="text-sm text-gray-600 leading-relaxed">700–3,000 字，摘要與評析各半，頁碼定位 100% 查核。</p></div></div>
+            <p class="text-sm text-gray-500 font-sans">規劃中：dhf-micro-insights（公共神學短內容）。</p>
+        </section>
+
         <!-- Section 06 -->
         <section id="section-06" class="max-w-3xl mx-auto px-6 fade-in mb-20">
-            <h2 class="text-sm font-sans font-bold tracking-widest text-[#8C3A3A] mb-2 uppercase">06 / Infrastructure</h2>
+            <h2 class="text-sm font-sans font-bold tracking-widest text-[#8C3A3A] mb-2 uppercase">09 / Infrastructure</h2>
             <h3 class="text-3xl font-bold mb-8">基礎設施：檢索與性能優化</h3>
             
             <p class="mb-6">
                 從技術層面評價，這份藍圖在方法論的整合上展現了極高的成熟度。傳統的 <span class="annotation-trigger" data-annotation="rag">RAG 系統</span> 最大的痛點是「引用漂移」——也就是 AI 生成的內容與註腳張冠李戴。
             </p>
             <p class="mb-6">
-                誠如前文 Stage 2.5 提及，數位詮釋學體系運用工具強制比對資料庫（如 Zotero）與生成內容。只有通過文獻血緣追蹤的結論，才會被允許寫入系統的 L1/L2 層。
+                誠如前文 Stage 2.5 提及，數位詮釋學體系運用工具強制比對資料庫（如 60 餘個 NotebookLM 專業資料庫）與生成內容。只有通過文獻血緣追蹤的結論，才會被允許寫入系統的 L1/L2 層。
             </p>
 
             <!-- Spec Grid -->
@@ -537,9 +559,11 @@
 
         <!-- Section 07 -->
         <section id="section-07" class="max-w-3xl mx-auto px-6 fade-in mb-10">
-            <h2 class="text-sm font-sans font-bold tracking-widest text-[#8C3A3A] mb-2 uppercase">07 / Future Outlook</h2>
-            <h3 class="text-3xl font-bold mb-8">邁向無特定模型的研發生態</h3>
+            <h2 class="text-sm font-sans font-bold tracking-widest text-[#8C3A3A] mb-2 uppercase">10 / Roadmap</h2>
+            <h3 class="text-3xl font-bold mb-8">邁向無特定模型的研發生態：2026–2028 路線圖</h3>
             
+            <ul class="space-y-2 my-6 font-sans text-sm"><li class="bg-white border border-[#E2DCD0] rounded-lg p-3"><b class="text-[#4A5D4E]">2026 Q4</b>　約翰福音、啟示錄；加拉太書</li><li class="bg-white border border-[#E2DCD0] rounded-lg p-3"><b class="text-[#4A5D4E]">2027 上半</b>　哥林多前後書、以弗所書、腓立比書、歌羅西書、教牧書信；民數記、出埃及記、利未記、申命記</li><li class="bg-white border border-[#E2DCD0] rounded-lg p-3"><b class="text-[#4A5D4E]">2027 下半–2028</b>　約伯記、傳道書；以賽亞書、耶利米書、以西結書；十二先知書</li><li class="bg-white border border-[#E2DCD0] rounded-lg p-3"><b class="text-[#4A5D4E]">2028</b>　希伯來書、雅各書、彼得書、猶大書；申命記史學與歷代志</li></ul>
+            <p class="mb-6">近期（2026 Q4）：升級公開網站、將其餘 47 篇中文 L3 註釋翻譯為學術英文，並啟動第一波擴展。</p>
             <p class="mb-6">
                 展望未來，本系統的終極目標是建立一個<strong>「不綁定特定供應商（Model-Agnostic）」</strong>的研究生態。無論是利用 Anthropic 的 Claude 系列、Google 的超長脈絡處理能力，或是私有部署的開源模型，數位詮釋學體系都能靈活調度。
             </p>
@@ -561,7 +585,7 @@
                 </div>
                 <div class="pl-4 border-l-2 border-[#8C3A3A]">
                     <p class="mb-1"><span class="font-bold text-gray-900">【註2】MCP（模型脈絡協定）</span></p>
-                    <p>Model Context Protocol，一種標準化介面，讓 AI 模型能安全地連接本地資料與外部工具。這解決了 AI 缺乏最新或私有知識的痛點，使「數位詮釋學體系」得以無縫存取研究者的 Zotero 文獻庫與本地筆記。</p>
+                    <p>Model Context Protocol，一種標準化介面，讓 AI 模型能安全地連接本地資料與外部工具。這解決了 AI 缺乏最新或私有知識的痛點，使「數位詮釋學體系」得以無縫存取研究者的 NotebookLM 文獻庫與本地筆記。</p>
                 </div>
                 <div class="pl-4 border-l-2 border-[#8C3A3A]">
                     <p class="mb-1"><span class="font-bold text-gray-900">【註3】LLM Wiki（大型語言模型維基）</span></p>
@@ -576,8 +600,8 @@
                     <p>Retrieval-Augmented Generation，一種結合外部資料庫檢索與文字生成的技術。雖然能減少 AI 幻覺，但常遭遇「引用漂移」問題；本計畫透過「誠信閘門」強制查核來源，克服了傳統 RAG 的致命傷。</p>
                 </div>
                 <div class="pl-4 border-l-2 border-[#8C3A3A]">
-                    <p class="mb-1"><span class="font-bold text-gray-900">【註6】Zotero</span></p>
-                    <p>一款免費且開源的跨平台文獻管理軟體，廣泛應用於學術界。透過 API 與 AI 代理串接後，它成為系統中所有論點的「事實查核基礎」，確保每一項學術詮釋都有堅實的文獻血緣。</p>
+                    <p class="mb-1"><span class="font-bold text-gray-900">【註6】NotebookLM 專業資料庫</span></p>
+                    <p>透過 gemini-notebook-mcp 串接 60 餘個專業評註資料庫（NICNT、BECNT、NIGTC 等），是所有論點的事實查核基礎。</p>
                 </div>
                 <div class="pl-4 border-l-2 border-[#8C3A3A]">
                     <p class="mb-1"><span class="font-bold text-gray-900">【註7】Claude Code</span></p>
@@ -634,9 +658,9 @@
                 title: 'RAG（檢索增強生成）',
                 desc: '結合檢索與生成的技術。雖能減少幻覺但常遇引用錯誤；本計畫透過「誠信閘門」強制比對來源以克服此痛點。'
             },
-            'zotero': {
-                title: 'Zotero',
-                desc: '開源的文獻管理軟體。透過 API 與 AI 代理串接後，作為系統的「事實查核資料庫」，確保詮釋具備文獻血緣。'
+            'notebooklm': {
+                title: 'NotebookLM 專業資料庫',
+                desc: '透過 gemini-notebook-mcp 連接 60 餘個專業評註資料庫，作為系統的「事實查核基礎」，確保每項詮釋具備文獻血緣與頁碼定位。'
             },
             'claude-code': {
                 title: 'Claude Code',
@@ -648,7 +672,7 @@
             },
             'provenance': {
                 title: '知識血緣追蹤 (Knowledge Provenance)',
-                desc: '在檔案屬性中強制記錄每條知識的來源出處（如 Zotero 引用、作者）與生成節點，確保知識可溯源且具備學術誠信。'
+                desc: '在檔案屬性中強制記錄每條知識的來源出處（如 NotebookLM 引用、作者）與生成節點，確保知識可溯源且具備學術誠信。'
             },
             'entropy-risk': {
                 title: '系統熵增風險 (Entropy Risk)',
